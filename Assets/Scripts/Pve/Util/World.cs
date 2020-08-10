@@ -1,11 +1,16 @@
-﻿using Pve.GameEntity;
+﻿using Assets.Scripts.Pve.Handlers;
+using Pve.GameEntity;
 using Pve.GameEntity.Enemy;
 using Pve.Handlers;
+using UnityEngine.UI;
 
 namespace Pve.Util
 {
     internal static class World
     {
+        public static string Text { get; set; }
+        public static string UserInput { get; set; }
+
         static World()
         {
             World.AdventureHandlerInstance = new AdventureHandler();
@@ -16,6 +21,7 @@ namespace Pve.Util
             World.NewGameHandlerInstance = new NewGameHandler();
             World.RestHandlerInstance = new RestHandler();
             World.WorldEventHandlerInstance = new WorldEventHandler();
+            World.BlankHandlerInstance = new BlankHandler();
         }
 
         public static StateHandlerBase CurrentState { get; set; }
@@ -32,6 +38,7 @@ namespace Pve.Util
         public static NewGameHandler NewGameHandlerInstance { get; set; }
         public static RestHandler RestHandlerInstance { get; set; }
         public static WorldEventHandler WorldEventHandlerInstance { get; set; }
+        public static BlankHandler BlankHandlerInstance { get; set; }
         #endregion handlers
     }
 }

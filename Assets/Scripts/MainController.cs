@@ -22,6 +22,14 @@ public class MainController : MonoBehaviour
 
     void Update()
     {
+        if (World.Exit)
+        {
+            return;
+        }
+
+        World.CurrentState.Execute();
+
+        /*
         if (Input.inputString == "\r")
         {
             PlayTypeSound();
@@ -43,7 +51,9 @@ public class MainController : MonoBehaviour
                 userinput += Input.inputString;
             }
         }
-        textUiComponent.text = text + userinput + Blink();
+        */
+
+        textUiComponent.text = World.Text + World.UserInput + Blink();
     }
 
     private void PlayTypeSound()

@@ -1,45 +1,92 @@
 ﻿using Pve.GameEntity;
 using Pve.Util;
 using System;
+using UnityEngine;
 
 namespace Pve.Handlers
 {
     internal class NewGameHandler : StateHandlerBase
     {
+        private bool waitingForInput;
         public NewGameHandler()
         {
             Description = "Start New Game.";
+            waitingForInput = false;
         }
 
         public override void Execute()
         {
-            World.Exit = false;
-            World.Player = new Player();
-
-            bool done;
-            do
+            if (waitingForInput == false)
             {
-                done = true;
+                waitingForInput = true;
+                World.Exit = false;
+                World.Player = new Player();
 
-                Console.Clear();
-                Console.WriteLine("What would you like to do?");
-                Console.WriteLine("1. " + World.NewGameHandlerInstance.Description);
-                Console.WriteLine("2. " + World.ExitHandlerInstance.Description);
-                Console.Write(": ");
-                string result = Console.ReadLine();
-                if (result == "1")
+                PrintOptions();
+            }
+
+            if (waitingForInput)
+            {
+                if (Input.inputString == "\r")
                 {
-                    World.CurrentState = World.MainHandlerInstance;
+                    bool accepted = ProcessUserInput();
+                    if (!accepted)
+                    {
+                        PrintOptions();
+                    }
+                    else
+                    {
+                        waitingForInput = false;
+                    }
+                    return;
                 }
-                else if (result == "2")
+                else if (Input.inputString == "\b")
                 {
-                    World.CurrentState = World.ExitHandlerInstance;
+                    if (World.UserInput.Length > 0)
+                    {
+                        World.UserInput = World.UserInput.Substring(0, World.UserInput.Length - 1);
+                    }
                 }
                 else
                 {
-                    done = false;
+                    if (Input.inputString.Length > 0)
+                    {
+                        World.UserInput += Input.inputString;
+                    }
                 }
-            } while (!done);
+            }
+        }
+
+        private void PrintOptions()
+        {
+            string worldText = "";
+            worldText += "What would you like to do?\n";
+            worldText += "1. " + World.NewGameHandlerInstance.Description + "\n";
+            worldText += "2. " + World.ExitHandlerInstance.Description + "\n";
+            worldText += ": ";
+            World.Text = worldText;
+        }
+
+        private bool ProcessUserInput()
+        {
+            bool accepted = true;
+            if (World.UserInput == "1")
+            {
+                //World.CurrentState = World.MainHandlerInstance;
+                World.CurrentState = World.BlankHandlerInstance;
+            }
+            else if (World.UserInput == "2")
+            {
+                //World.CurrentState = World.ExitHandlerInstance;
+                World.CurrentState = World.BlankHandlerInstance;
+            }
+            else
+            {
+                accepted = false;
+            }
+
+            World.UserInput = "";
+            return accepted;
         }
     }
 }
