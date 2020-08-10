@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Pve.Util;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Display : MonoBehaviour
+public class MainController : MonoBehaviour
 {
     private string text =
             "+-------+\n" +
@@ -16,6 +17,7 @@ public class Display : MonoBehaviour
     void Start()
     {
         textUiComponent.text = text;
+        World.CurrentState = World.NewGameHandlerInstance;
     }
 
     void Update()
