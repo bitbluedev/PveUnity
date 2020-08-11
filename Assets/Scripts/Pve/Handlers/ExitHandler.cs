@@ -1,22 +1,31 @@
 ﻿using Pve.Util;
 using System;
+using UnityEngine;
 
 namespace Pve.Handlers
 {
     internal class ExitHandler : StateHandlerBase
     {
+        private bool waitingForInput;
+
         public ExitHandler()
         {
             Description = "Exit Game.";
+            waitingForInput = false;
         }
 
         public override void Execute()
         {
-            World.Exit = true;
-            Console.Clear();
-            Console.WriteLine("Farewell.");
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
+            if (!waitingForInput)
+            {
+                World.Text = "Farewell.\nPress any key to exit...\n";
+                waitingForInput = true;
+            }
+
+            if (Input.anyKeyDown)
+            {
+                World.Exit = true;
+            }
         }
     }
 }

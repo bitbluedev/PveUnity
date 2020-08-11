@@ -16,7 +16,7 @@ namespace Pve.Handlers
 
         public override void Execute()
         {
-            if (waitingForInput == false)
+            if (!waitingForInput)
             {
                 waitingForInput = true;
                 World.Exit = false;
@@ -77,8 +77,7 @@ namespace Pve.Handlers
             }
             else if (World.UserInput == "2")
             {
-                //World.CurrentState = World.ExitHandlerInstance;
-                World.CurrentState = World.BlankHandlerInstance;
+                World.CurrentState = World.ExitHandlerInstance;
             }
             else
             {
