@@ -57,8 +57,7 @@ namespace Pve.Handlers
             }
             else if (World.UserInput == "2")
             {
-                //World.CurrentState = World.AdventureHandlerInstance;
-                World.CurrentState = World.BlankHandlerInstance;
+                World.CurrentState = World.AdventureHandlerInstance;
             }
             else if (World.UserInput == "3")
             {

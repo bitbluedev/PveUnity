@@ -1,32 +1,53 @@
 ﻿using Pve.GameEntity.Enemy;
 using Pve.Util;
 using System;
+using UnityEngine;
 
 namespace Pve.Handlers
 {
     internal class AdventureHandler : StateHandlerBase
     {
+        private bool waitingForInput;
+
         public AdventureHandler()
         {
             Description = "Go on Adventure.";
+            waitingForInput = false;
         }
 
         public override void Execute()
         {
-            bool combat = Dice.Roll() > 2;
-            if (combat)
+            if (!waitingForInput)
             {
-                World.Enemy = CreateRandomEnemy();
-                Console.Clear();
-                Console.WriteLine("You have encountered a hostile " + World.Enemy.Name);
-                Console.WriteLine("Press any key to begin combat...");
-                Console.ReadKey();
-                World.CurrentState = World.CombatHandlerInstance;
+                bool combat = Dice.Roll() > 2;
+                if (combat)
+                {
+                    World.Enemy = CreateRandomEnemy();
+                    PrintOptions();
+                    waitingForInput = true;
+                }
+                else
+                {
+                    //World.CurrentState = World.WorldEventHandlerInstance;
+                    World.CurrentState = World.BlankHandlerInstance;
+                    return;
+                }
             }
-            else
+
+            if (Input.anyKeyDown)
             {
-                World.CurrentState = World.WorldEventHandlerInstance;
+                //World.CurrentState = World.CombatHandlerInstance;
+                World.CurrentState = World.BlankHandlerInstance;
+                waitingForInput = false;
             }
+        }
+
+        private void PrintOptions()
+        {
+            string worldText = "";
+            worldText += "You have encountered a hostile " + World.Enemy.Name + ".\n";
+            worldText += "Press any key to begin combat...\n";
+            World.Text = worldText;
         }
 
         private Enemy CreateRandomEnemy()
