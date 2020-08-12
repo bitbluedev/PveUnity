@@ -1,6 +1,5 @@
 ﻿using Pve.GameEntity;
 using Pve.Util;
-using System;
 using UnityEngine;
 
 namespace Pve.Handlers
@@ -8,6 +7,7 @@ namespace Pve.Handlers
     internal class NewGameHandler : StateHandlerBase
     {
         private bool waitingForInput;
+
         public NewGameHandler()
         {
             Description = "Start New Game.";
@@ -72,8 +72,7 @@ namespace Pve.Handlers
             bool accepted = true;
             if (World.UserInput == "1")
             {
-                //World.CurrentState = World.MainHandlerInstance;
-                World.CurrentState = World.BlankHandlerInstance;
+                World.CurrentState = World.MainHandlerInstance;
             }
             else if (World.UserInput == "2")
             {
