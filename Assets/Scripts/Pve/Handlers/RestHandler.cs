@@ -1,16 +1,35 @@
 ﻿using Pve.Util;
-using System;
+using UnityEngine;
 
 namespace Pve.Handlers
 {
     internal class RestHandler : StateHandlerBase
     {
+        private bool waitingForInput;
+
         public RestHandler()
         {
             Description = "Rest.";
+            waitingForInput = false;
         }
 
         public override void Execute()
+        {
+            if (!waitingForInput)
+            {
+                waitingForInput = true;
+
+                PrintOptions();
+            }
+            if (Input.anyKeyDown)
+            {
+                World.CurrentState = World.MainHandlerInstance;
+                waitingForInput = false;
+            }
+            
+        }
+
+        private void PrintOptions()
         {
             string playerDescription = World.Player.ToString();
             bool shouldHeal = World.Player.Health < World.Player.MaxHealth;
@@ -19,16 +38,15 @@ namespace Pve.Handlers
                 World.Player.Health = World.Player.MaxHealth;
                 playerDescription += " -> " + World.Player.ToString();
             }
-            Console.Clear();
-            Console.WriteLine(playerDescription);
-            Console.WriteLine("You have rested.");
+            string worldText = "";
+            worldText += playerDescription + "\n";
+            worldText += "You have rested.\n";
             if (shouldHeal)
             {
-                Console.WriteLine("You are at full strength again.");
+                worldText += "You are at full strength again.\n";
             }
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-            World.CurrentState = World.MainHandlerInstance;
+            worldText += "Press any key to continue...\n";
+            World.Text = worldText;
         }
     }
 }

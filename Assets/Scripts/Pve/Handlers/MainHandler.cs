@@ -27,6 +27,10 @@ namespace Pve.Handlers
                 {
                     PrintOptions();
                 }
+                else
+                {
+                    waitingForInput = false;
+                }
             }
             else if (Input.inputString == "\b")
             {
@@ -49,8 +53,7 @@ namespace Pve.Handlers
             bool accepted = true;
             if (World.UserInput == "1")
             {
-                //World.CurrentState = World.RestHandlerInstance;
-                World.CurrentState = World.BlankHandlerInstance;
+                World.CurrentState = World.RestHandlerInstance;
             }
             else if (World.UserInput == "2")
             {
