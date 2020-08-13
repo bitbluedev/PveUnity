@@ -55,7 +55,7 @@ namespace Pve.Handlers
                 int index = (roll - 1) / 2;
                 worldText = messages[index] + "\n";
             }
-            worldText += "Press any key to begin continue...";
+            worldText += "Press any key to begin continue...\n";
             World.Text = worldText;
         }
     }

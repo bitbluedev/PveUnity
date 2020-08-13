@@ -2,68 +2,142 @@
 using Pve.Util;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Pve.Handlers
 {
     internal class CombatHandler : StateHandlerBase
     {
+        private bool waitingForInput;
+        private bool finished = false;
+        string[] fullCombatTextLines;
+        int index = 0;
+
+        public CombatHandler()
+        {
+            waitingForInput = false;
+        }
+
         public override void Execute()
         {
-            Console.Clear();
+            if (!waitingForInput)
+            {
+                fullCombatTextLines = PrintOptions().Split('\n');
+                waitingForInput = true;
+                index = 0;
+
+                PrintPart();
+            }
+
+
+            if (Input.anyKeyDown)
+            {
+                PrintPart();
+
+                if (index == fullCombatTextLines.Length)
+                {
+                    if (!finished)
+                    {
+                        finished = true;
+                        return;
+                    }
+                    else
+                    {
+                        index = 0;
+                        waitingForInput = false;
+                        if (World.Player.Health > 0)
+                        {
+                            World.CurrentState = World.MainHandlerInstance;
+                        }
+                        else
+                        {
+                            World.CurrentState = World.NewGameHandlerInstance;
+                        }
+                        finished = false;
+                    }
+                }
+            }
+        }
+
+        private void PrintPart()
+        {
+            if (finished)
+            {
+                return;
+            }
+            string worldText = "";
+            if (fullCombatTextLines[index].StartsWith("Turn #"))
+            {
+                worldText += fullCombatTextLines[index] + "\n";
+                index++;
+            }
+            while (index < fullCombatTextLines.Length && !fullCombatTextLines[index].StartsWith("Turn #"))
+            {
+                worldText += fullCombatTextLines[index] + "\n";
+                index++;
+            }
+            worldText += "Press any key to continue...\n";
+            World.Text = worldText;
+        }
+
+        private string PrintOptions()
+        {
             int turn = 1;
+
+            string worldText = "";
+
             while (World.Player.Health >= 0 && World.Enemy.Health >= 0)
             {
-                Console.WriteLine("Turn #" + turn++);
-                Console.WriteLine(World.Player.ToString());
-                Console.WriteLine("Enemy: " + World.Enemy.ToString());
-                DoCombatTurn();
+                worldText += "Turn #" + turn + "\n";
+                worldText += World.Player.ToString() + "\n";
+                worldText += "Enemy: " + World.Enemy + "\n";
+                worldText += DoCombatTurn();
+                turn++;
             }
 
             bool victory = World.Player.Health > 0;
 
             if (victory)
             {
-                Console.WriteLine("You have won.");
+                worldText += "You have won." + "\n";
                 List<Item> loot = LootGenerator.GenerateLootItems(World.Enemy.Level);
                 World.Player.Inventory.AddRange(loot);
                 if (loot.Count > 0)
                 {
                     string s = loot.Count > 1 ? "s" : "";
-                    Console.WriteLine("You have found " + loot.Count + " item" + s + " after the battle.");
+                    worldText += "You have found " + loot.Count + " item" + s + " after the battle." + "\n";
                     for (int i = 0; i < loot.Count; i++)
                     {
-                        Console.WriteLine("* " + loot[i]);
+                        worldText += "* " + loot[i] + "\n";
                     }
                 }
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                World.CurrentState = World.MainHandlerInstance;
             }
             else
             {
-                Console.WriteLine("You have lost. Your adventure ends here.");
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                World.CurrentState = World.NewGameHandlerInstance;
+                worldText += "You have lost. Your adventure ends here." + "\n";
             }
+
+            return worldText;
         }
 
-        private void DoCombatTurn()
+        private string DoCombatTurn()
         {
+            string combatText = "";
+
             int playerAttackRoll = Dice.RollMultipleDice(2) + Dice.RollCrit(World.Player.CriticalHitChancePercent, 100);
             int enemyAttackRoll = Dice.RollMultipleDice(2) + Dice.RollCrit(World.Enemy.Level, 100);
             int playerAttack = World.Player.Attack + playerAttackRoll;
             int enemyAttack = World.Enemy.Attack + enemyAttackRoll;
 
-            Console.WriteLine("Player Attack Power: " + World.Player.Attack + "+" + playerAttackRoll + " -> " + playerAttack);
-            Console.WriteLine("Enemy Attack Power:  " + World.Enemy.Attack + "+" + enemyAttackRoll + " -> " + enemyAttack);
+            combatText += "Player Attack Power: " + World.Player.Attack + "+" + playerAttackRoll + " -> " + playerAttack + "\n";
+            combatText += "Enemy Attack Power:  " + World.Enemy.Attack + "+" + enemyAttackRoll + " -> " + enemyAttack + "\n";
             if (playerAttack > enemyAttack)
             {
                 int damage = Math.Max(0, World.Player.Attack - World.Enemy.Defense);
                 int crit = Dice.RollCrit(20, 5);
                 World.Enemy.Health -= (damage + crit);
                 string critMessage = crit > 0 ? "+" + crit : "";
-                Console.WriteLine("Player attacks " + World.Enemy.Name + ". " + World.Enemy.Name + " takes " + damage + critMessage + " damage.");
+                combatText += "Player attacks " + World.Enemy.Name + ". " + World.Enemy.Name + " takes " + damage + critMessage + " damage." + "\n";
             }
             else
             {
@@ -71,8 +145,10 @@ namespace Pve.Handlers
                 int crit = Dice.RollCrit(20, 5);
                 World.Player.Health -= (damage + crit);
                 string critMessage = crit > 0 ? "+" + crit : "";
-                Console.WriteLine(World.Enemy.Name + " attacks Player. Player takes " + damage + critMessage + " damage.");
+                combatText += World.Enemy.Name + " attacks Player. Player takes " + damage + critMessage + " damage." + "\n";
             }
+
+            return combatText;
         }
     }
 }
