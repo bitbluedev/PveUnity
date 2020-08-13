@@ -1,11 +1,14 @@
 ﻿using Pve.GameEntity.Equipment;
 using Pve.Util;
 using System;
+using UnityEngine;
 
 namespace Pve.Handlers
 {
     internal class WorldEventHandler : StateHandlerBase
     {
+        private bool waitingForInput;
+
         private static readonly string[] messages =
             {
                 "You wandered in green meadows of foreign lands.",
@@ -14,26 +17,46 @@ namespace Pve.Handlers
                 "You noticed something strange near a landmark. You have found a long abandoned stash."
             };
 
+        public WorldEventHandler()
+        {
+            waitingForInput = false;
+        }
+
         public override void Execute()
         {
-            Console.Clear();
+            if (!waitingForInput)
+            {
+                waitingForInput = true;
+                PrintOptions();
+            }
+
+            if (Input.anyKeyDown)
+            {
+                waitingForInput = false;
+                World.CurrentState = World.MainHandlerInstance;
+            }
+        }
+
+        private void PrintOptions()
+        {
+            string worldText = "";
             if (Dice.RollCrit(10, 1) > 0)
             {
                 Item item = LootGenerator.GenerateItem();
-                Console.WriteLine(messages[3]);
-                Console.WriteLine("You found an item:");
-                Console.WriteLine("* " + item);
+                worldText += messages[3] + "\n";
+                worldText += "You found an item:\n";
+                worldText += "* " + item + "\n";
+                worldText += "You found an item:\n";
                 World.Player.Inventory.Add(item);
             }
             else
             {
                 int roll = Dice.Roll();
                 int index = (roll - 1) / 2;
-                Console.WriteLine(messages[index]);
+                worldText = messages[index] + "\n";
             }
-            Console.WriteLine("Press any key to begin continue...");
-            Console.ReadKey();
-            World.CurrentState = World.MainHandlerInstance;
+            worldText += "Press any key to begin continue...";
+            World.Text = worldText;
         }
     }
 }

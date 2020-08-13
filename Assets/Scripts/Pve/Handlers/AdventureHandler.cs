@@ -1,6 +1,5 @@
 ﻿using Pve.GameEntity.Enemy;
 using Pve.Util;
-using System;
 using UnityEngine;
 
 namespace Pve.Handlers
@@ -28,16 +27,14 @@ namespace Pve.Handlers
                 }
                 else
                 {
-                    //World.CurrentState = World.WorldEventHandlerInstance;
-                    World.CurrentState = World.BlankHandlerInstance;
+                    World.CurrentState = World.WorldEventHandlerInstance;
                     return;
                 }
             }
 
             if (Input.anyKeyDown)
             {
-                //World.CurrentState = World.CombatHandlerInstance;
-                World.CurrentState = World.BlankHandlerInstance;
+                World.CurrentState = World.CombatHandlerInstance;
                 waitingForInput = false;
             }
         }
