@@ -2,6 +2,7 @@
 using Pve.Util;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Pve.Handlers
@@ -9,9 +10,9 @@ namespace Pve.Handlers
     internal class CombatHandler : StateHandlerBase
     {
         private bool waitingForInput;
-        private bool finished = false;
-        string[] fullCombatTextLines;
-        int index = 0;
+        private List<string> turns;
+        string result;
+        int phase;
 
         public CombatHandler()
         {
@@ -22,29 +23,41 @@ namespace Pve.Handlers
         {
             if (!waitingForInput)
             {
-                fullCombatTextLines = PrintOptions().Split('\n');
+                turns = new List<string>();
+                DoCombat();
                 waitingForInput = true;
-                index = 0;
 
                 PrintPart();
+                phase = 0;
             }
 
-
-            if (Input.anyKeyDown)
+            switch (phase)
             {
-                PrintPart();
-
-                if (index == fullCombatTextLines.Length)
-                {
-                    if (!finished)
+                case 0:
                     {
-                        finished = true;
-                        return;
+                        if (Input.anyKeyDown)
+                        {
+                            if (Input.GetKeyDown(KeyCode.Escape) && turns.Count > 0)
+                            {
+                                string lastTurn = "...\n" + turns.Last();
+                                turns.Clear();
+                                turns.Add(lastTurn);
+                            }
+                            if (turns.Count > 0)
+                            {
+                                PrintPart();
+                            }
+                            else
+                            {
+                                phase = 1;
+                            }
+                        }
                     }
-                    else
+                    break;
+                case 1:
                     {
-                        index = 0;
                         waitingForInput = false;
+                        phase = 0;
                         if (World.Player.Health > 0)
                         {
                             World.CurrentState = World.MainHandlerInstance;
@@ -53,71 +66,64 @@ namespace Pve.Handlers
                         {
                             World.CurrentState = World.NewGameHandlerInstance;
                         }
-                        finished = false;
                     }
-                }
+                    break;
             }
         }
 
         private void PrintPart()
         {
-            if (finished)
+            string worldText;
+            worldText = turns[0];
+            turns.RemoveAt(0);
+            if (turns.Count > 0)
             {
-                return;
+                worldText += "Press ESC to skip to results.\n";
             }
-            string worldText = "";
-            if (fullCombatTextLines[index].StartsWith("Turn #"))
+            else
             {
-                worldText += fullCombatTextLines[index] + "\n";
-                index++;
-            }
-            while (index < fullCombatTextLines.Length && !fullCombatTextLines[index].StartsWith("Turn #"))
-            {
-                worldText += fullCombatTextLines[index] + "\n";
-                index++;
+                worldText += result;
             }
             worldText += "Press any key to continue...\n";
             World.Text = worldText;
         }
 
-        private string PrintOptions()
+        private void DoCombat()
         {
             int turn = 1;
 
-            string worldText = "";
-
             while (World.Player.Health >= 0 && World.Enemy.Health >= 0)
             {
-                worldText += "Turn #" + turn + "\n";
-                worldText += World.Player + "\n";
-                worldText += "Enemy: " + World.Enemy + "\n";
-                worldText += DoCombatTurn();
+                string turnText = "Turn #" + turn + "\n";
+                turnText += World.Player + "\n";
+                turnText += "Enemy: " + World.Enemy + "\n";
+                turnText += DoCombatTurn();
+                turns.Add(turnText);
                 turn++;
             }
 
             bool victory = World.Player.Health > 0;
 
+            result = "";
             if (victory)
             {
-                worldText += "You have won." + "\n";
+                result += "You have won." + "\n";
                 List<Item> loot = LootGenerator.GenerateLootItems(World.Enemy.Level);
                 World.Player.Inventory.AddRange(loot);
                 if (loot.Count > 0)
                 {
                     string s = loot.Count > 1 ? "s" : "";
-                    worldText += "You have found " + loot.Count + " item" + s + " after the battle." + "\n";
+                    result += "You have found " + loot.Count + " item" + s + " after the battle." + "\n";
                     for (int i = 0; i < loot.Count; i++)
                     {
-                        worldText += "* " + loot[i] + "\n";
+                        result += "* " + loot[i] + "\n";
                     }
                 }
             }
             else
             {
-                worldText += "You have lost. Your adventure ends here." + "\n";
+                result += "You have lost. Your adventure ends here." + "\n";
             }
-
-            return worldText;
         }
 
         private string DoCombatTurn()
