@@ -89,7 +89,7 @@ namespace Pve.Handlers
             while (World.Player.Health >= 0 && World.Enemy.Health >= 0)
             {
                 worldText += "Turn #" + turn + "\n";
-                worldText += World.Player.ToString() + "\n";
+                worldText += World.Player + "\n";
                 worldText += "Enemy: " + World.Enemy + "\n";
                 worldText += DoCombatTurn();
                 turn++;
