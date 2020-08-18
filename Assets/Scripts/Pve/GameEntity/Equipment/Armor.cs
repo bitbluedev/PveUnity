@@ -8,8 +8,8 @@
 
         public override string ToString()
         {
-            string healthOptional = Health > 0 ? (" HEALTH: " + Health) : "";
-            string description = Name + " [TYPE: Armor DEFENSE: " + (BaseDefense + ExtraDefense) + healthOptional + "]";
+            string healthOptional = Health > 0 ? ("\n * HEALTH: " + Health) : "";
+            string description = Name + "\n<size=15> * TYPE: Armor\n * DEFENSE: " + (BaseDefense + ExtraDefense) + healthOptional + "\n</size>";
             return description;
         }
     }

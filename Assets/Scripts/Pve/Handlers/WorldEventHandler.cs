@@ -46,7 +46,6 @@ namespace Pve.Handlers
                 worldText += messages[3] + "\n";
                 worldText += "You found an item:\n";
                 worldText += "* " + item + "\n";
-                worldText += "You found an item:\n";
                 World.Player.Inventory.Add(item);
             }
             else

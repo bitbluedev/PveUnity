@@ -8,8 +8,8 @@
 
         public override string ToString()
         {
-            string critOptional = CriticalHitChance > 0 ? (" CRITICAL HIT CHANCE: " + CriticalHitChance) : "";
-            string description = Name + " [TYPE: Weapon DAMAGE: " + (BaseDamage + ExtraDamage) + critOptional + "]";
+            string critOptional = CriticalHitChance > 0 ? ("\n * CRITICAL HIT CHANCE: " + CriticalHitChance) : "";
+            string description = Name + "\n<size=15> * TYPE: Weapon\n * DAMAGE: " + (BaseDamage + ExtraDamage) + critOptional + "\n</size>";
             return description;
         }
     }

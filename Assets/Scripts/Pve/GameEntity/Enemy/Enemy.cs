@@ -19,7 +19,13 @@
 
         public override string ToString()
         {
-            return Name + " [ATTACK: " + Attack + " DEFENSE: " + Defense + " HEALTH: " + Health + "]";
+            return Name + "\n" +
+                "<size=15>" +
+                " * ATTACK: " + Attack + "\n" +
+                " * DEFENSE: " + Defense + "\n" +
+                " * HEALTH: " + Health +  "\n" +
+                " * CRITICAL HIT CHANCE: " + Level + "%" + "\n" +
+                "</size>";
         }
     }
 }

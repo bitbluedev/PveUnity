@@ -46,9 +46,9 @@ namespace Pve.Handlers
                         worldText += PrintEquippedItems();
 
                         worldText += "What would you like to do?\n";
-                        string noUnequippedNotification = (World.Player.Inventory.Count == 0 ? " (There are no items to equip) " : "");
+                        string noUnequippedNotification = (World.Player.Inventory.Count == 0 ? " <size=20><i>(There are no items to equip)</i></size> " : "");
                         worldText += "1. Equip Item." + noUnequippedNotification + "\n";
-                        string noEquippedNotification = (World.Player.Weapon == null && World.Player.Armor == null ? " (There are no items to unequip) " : "");
+                        string noEquippedNotification = (World.Player.Weapon == null && World.Player.Armor == null ? " <size=20><i>(There are no items to unequip)</i></size> " : "");
                         worldText += "2. Unequip Item." + noEquippedNotification + "\n";
                         worldText += "3. Continue Adventure." + "\n";
                         worldText += "4. " + World.ExitHandlerInstance.Description + "\n";

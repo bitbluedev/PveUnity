@@ -76,13 +76,9 @@ namespace Pve.Handlers
             string worldText;
             worldText = turns[0];
             turns.RemoveAt(0);
-            if (turns.Count > 0)
+            if (turns.Count > 1)
             {
                 worldText += "Press ESC to skip to results.\n";
-            }
-            else
-            {
-                worldText += result;
             }
             worldText += "Press any key to continue...\n";
             World.Text = worldText;
@@ -92,7 +88,7 @@ namespace Pve.Handlers
         {
             int turn = 1;
 
-            while (World.Player.Health >= 0 && World.Enemy.Health >= 0)
+            while (World.Player.Health > 0 && World.Enemy.Health > 0)
             {
                 string turnText = "Turn #" + turn + "\n";
                 turnText += World.Player + "\n";
@@ -124,6 +120,7 @@ namespace Pve.Handlers
             {
                 result += "You have lost. Your adventure ends here." + "\n";
             }
+            turns.Add(result);
         }
 
         private string DoCombatTurn()

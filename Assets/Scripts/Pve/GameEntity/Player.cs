@@ -73,12 +73,13 @@ namespace Pve.GameEntity
 
         public override string ToString()
         {
-            return "Player [" +
-                "ATTACK: " + Attack + 
-                " DEFENSE: " + Defense + 
-                " HEALTH: " + Health + "/" + MaxHealth + 
-                " CRITICAL HIT CHANCE: " + CriticalHitChancePercent + "%" + 
-                "]";
+            return "Player\n" +
+                "<size=15>" +
+                " * ATTACK: " + Attack + "\n" +
+                " * DEFENSE: " + Defense + "\n" +
+                " * HEALTH: " + Health + "/" + MaxHealth + "\n" +
+                " * CRITICAL HIT CHANCE: " + CriticalHitChancePercent + "%" + "\n" +
+                "</size>";
         }
     }
 }

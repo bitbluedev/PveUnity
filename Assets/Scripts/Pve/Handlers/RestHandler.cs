@@ -1,4 +1,5 @@
 ﻿using Pve.Util;
+using System.Linq;
 using UnityEngine;
 
 namespace Pve.Handlers
@@ -35,8 +36,14 @@ namespace Pve.Handlers
             bool shouldHeal = World.Player.Health < World.Player.MaxHealth;
             if (shouldHeal)
             {
+                // Not too nice hack to display health replenishment instead of writing the whole player in states before and after.
+                string originalLine = (from str in playerDescription.Split('\n')
+                                       where str.StartsWith(" * HEALTH:")
+                                       select str).First();
+                string newLine = originalLine + " ---> " + World.Player.MaxHealth + " / " + World.Player.MaxHealth;
+                playerDescription = playerDescription.Replace(originalLine, newLine);
+
                 World.Player.Health = World.Player.MaxHealth;
-                playerDescription += " -> " + World.Player;
             }
             string worldText = "";
             worldText += playerDescription + "\n";
