@@ -2,6 +2,7 @@
 using Pve.GameEntity;
 using Pve.GameEntity.Enemy;
 using Pve.Handlers;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Pve.Util
@@ -40,5 +41,9 @@ namespace Pve.Util
         public static WorldEventHandler WorldEventHandlerInstance { get; set; }
         public static BlankHandler BlankHandlerInstance { get; set; }
         #endregion handlers
+
+        public static Sprite BearSprite { get; set; }
+        public static Sprite DogSprite { get; set; }
+        public static Sprite GiantSprite { get; set; }
     }
 }

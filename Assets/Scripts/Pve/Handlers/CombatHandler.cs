@@ -66,6 +66,7 @@ namespace Pve.Handlers
                         {
                             World.CurrentState = World.NewGameHandlerInstance;
                         }
+                        World.Enemy = null;
                     }
                     break;
             }
